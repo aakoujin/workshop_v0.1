@@ -9,7 +9,6 @@ namespace workshop_v0._1.Models
     public class Offer
     {
         [Key]
-        [Required(AllowEmptyStrings =false)]
         public int Id_offer { get; set; }
         
         [Display(Name = "Title")]

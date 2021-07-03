@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>List of offers</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <h2>List of offers</h2>
+    <form name="offerForm">
+        <input type="hidden" name="id_offer" value="0"/>
+        <div class="form-group col-md-5">
+            <label for="title">Title</label>
+            <input class="form-control" name="title" />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="description">Description</label>
+            <input class="form-control" name="description" />
+        </div>
+
+        <div class="form-group col-md-5">
+            <label for="price">price</label>
+            <input class="form-control" name="price" type="number" />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="destination">Destination</label>
+            <input class="form-control" name="destination" />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="start">Start</label>
+            <input class="form-control" name="start" />
+        </div>
+        <div class="panel-body">
+            <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+            <a id="reset" class="btn btn-primary">Reset</a>
+        </div>
+    </form>
+    <table class="table table-condensed table-striped  col-md-6">
+        <thead><tr><th>Id_offer</th><th>Title</th><th>Description</th><th>Price</th><th>Destination</th><th>Start</th><th></th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+
+        async function getOffers() {
+            const response = await fetch("/api/offers", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const offers = await response.json();
+                let rows = document.querySelector("tbody");
+                users.forEach(offer => {
+                    rows.append(row(offer));
+                });
+            }
+        }
+
+        async function GetOffer(id) {
+            const response = await fetch("/api/offers/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const offer = await response.json();
+                const form = document.forms["offerForm"];
+                form.elements["id_offer"].value = offer.id_offer;
+                form.elements["title"].value = offer.title;
+                form.elements["description"].value = offer.description;
+                form.elements["destination"].value = offer.destination;
+                form.elements["price"].value = offer.price;
+                form.elements["start"].value = offer.start;
+            }
+        }
+
+        async function CreateOffer(offerTitle, offerDescription, offerPrice, offerDestination, offerStart) {
+            const response = await fetch("api/offers", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: offerTitle,
+                    description: offerDescription,
+                    price: parseFloat(offerPrice, 10),
+                    destination: offerDestination,
+                    start: offerStart
+                })
+            });
+            if (response.ok === true) {
+                const offer = await response.json();
+                reset();
+                document.querySelector("tbody").append(row(offer));
+            }
+        }
+
+        async function EditOffer() {
+
+        }
+
+
+
+
+
+        function reset() {
+            const form = document.forms["offerForm"];
+            form.reset();
+            form.elements["id_offer"].value = 0;
+        }
+
+        function row(offer) {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", offer.id_offer);
+
+            const idTd = document.createElement("td");
+            idTd.append(offer.id_offer);
+            tr.append(idTd);
+
+            //todo
+        }
+
+
+
+    </script>
+
+
+
+</body>
+</html>
