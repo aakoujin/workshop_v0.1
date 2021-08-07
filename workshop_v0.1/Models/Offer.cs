@@ -16,7 +16,7 @@ namespace workshop_v0._1.Models
         public string Title { get; set; }
 
         [Display(Name = "Description")]
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = true)]
         public string Description { get; set; }
         
         [Display(Name = "Price")]
@@ -24,7 +24,6 @@ namespace workshop_v0._1.Models
         public decimal Price { get; set; }
         
         [Display(Name = "Destination")]
-        [Required(AllowEmptyStrings = false)]
         public string Destination { get; set; }
         
         [Display(Name = "Start")]
