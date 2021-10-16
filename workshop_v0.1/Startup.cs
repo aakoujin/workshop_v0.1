@@ -32,6 +32,7 @@ namespace workshop_v0._1
            
             //EF
             services.AddDbContext<OfferContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<ListingContext>(options => options.UseSqlServer(con));
 
             services.AddControllers();
         }
@@ -58,7 +59,7 @@ namespace workshop_v0._1
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapRazorPages();
+                //endpoints.MapRazorPages();
             });
         }
     }

@@ -1,21 +1,18 @@
 {
   "format": 1,
   "restore": {
-    "D:\\testfort\\workshop_v0.1\\workshop_v0.1\\workshop_v0.1.csproj": {}
+    "E:\\TF projects\\workshop\\workshop_v0.1\\workshop_v0.1.csproj": {}
   },
   "projects": {
-    "D:\\testfort\\workshop_v0.1\\workshop_v0.1\\workshop_v0.1.csproj": {
+    "E:\\TF projects\\workshop\\workshop_v0.1\\workshop_v0.1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\testfort\\workshop_v0.1\\workshop_v0.1\\workshop_v0.1.csproj",
+        "projectUniqueName": "E:\\TF projects\\workshop\\workshop_v0.1\\workshop_v0.1.csproj",
         "projectName": "workshop_v0.1",
-        "projectPath": "D:\\testfort\\workshop_v0.1\\workshop_v0.1\\workshop_v0.1.csproj",
+        "projectPath": "E:\\TF projects\\workshop\\workshop_v0.1\\workshop_v0.1.csproj",
         "packagesPath": "C:\\Users\\Artem Andreoli\\.nuget\\packages\\",
-        "outputPath": "D:\\testfort\\workshop_v0.1\\workshop_v0.1\\obj\\",
+        "outputPath": "E:\\TF projects\\workshop\\workshop_v0.1\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
           "C:\\Users\\Artem Andreoli\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -66,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }
