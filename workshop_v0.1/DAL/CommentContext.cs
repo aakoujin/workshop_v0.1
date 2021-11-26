@@ -12,6 +12,6 @@ namespace workshop_v0._1.DAL
         public CommentContext(DbContextOptions<CommentContext> options) : base(options)
         {
         }
-        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Comment> Comment { get; set; }
     }
 }

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using workshop_v0._1.DAL;
 using workshop_v0._1.Models;
+using System.Reflection;
+using System.IO;
+using Microsoft.OpenApi.Models;
 
 
 namespace workshop_v0._1
@@ -33,8 +36,21 @@ namespace workshop_v0._1
             //EF
             services.AddDbContext<OfferContext>(options => options.UseSqlServer(con));
             services.AddDbContext<ListingContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<LocationContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<UserContext>(options => options.UseSqlServer(con));
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(x => 
+            x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
+
+            services.AddSwaggerGen(c => 
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v0.1",
+                    Title = "Workshop API",
+                    Description = "TestFort Web API workshop v0.1",
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,8 +69,12 @@ namespace workshop_v0._1
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseAuthorization();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => 
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Workshop API");
+            });
 
             app.UseEndpoints(endpoints =>
             {

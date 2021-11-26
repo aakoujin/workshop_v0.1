@@ -11,7 +11,8 @@ namespace workshop_v0._1.DAL
     {
         public LocationContext(DbContextOptions<LocationContext> options) : base(options)
         {
+
         }
-        public DbSet<Location> Locations { get; set; }
+        public DbSet<Location> Location { get; set; }
     }
 }

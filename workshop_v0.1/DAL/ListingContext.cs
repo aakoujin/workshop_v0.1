@@ -14,6 +14,25 @@ namespace workshop_v0._1.DAL
 
         }
 
-        public DbSet<Listing> Listings { get; set; }
+        public DbSet<Listing> Listing { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Listing>()
+                .HasMany(li => li.locations)
+                .WithOne(lo => lo.listing)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Listing>()
+                .HasMany(li => li.comments)
+                .WithOne(co => co.listing)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Listing>()
+                .HasMany(li => li.contents)
+                .WithOne(c => c.listing)
+                .OnDelete(DeleteBehavior.SetNull);
+
+        }
     }
 }
