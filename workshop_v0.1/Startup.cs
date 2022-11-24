@@ -29,6 +29,13 @@ namespace workshop_v0._1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             services.AddRazorPages();
 
             var con = Configuration.GetConnectionString("OffersDbConnection");
@@ -38,6 +45,7 @@ namespace workshop_v0._1
             services.AddDbContext<ListingContext>(options => options.UseSqlServer(con));
             services.AddDbContext<LocationContext>(options => options.UseSqlServer(con));
             services.AddDbContext<UserContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<ContentContext>(options => options.UseSqlServer(con));
 
             services.AddControllers().AddJsonOptions(x => 
             x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
@@ -75,6 +83,7 @@ namespace workshop_v0._1
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Workshop API");
             });
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

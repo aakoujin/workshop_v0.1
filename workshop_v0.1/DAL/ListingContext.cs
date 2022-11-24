@@ -33,6 +33,10 @@ namespace workshop_v0._1.DAL
                 .WithOne(c => c.listing)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Listing>()
+                .HasOne(u => u.user)
+                .WithMany(li => li.listings)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

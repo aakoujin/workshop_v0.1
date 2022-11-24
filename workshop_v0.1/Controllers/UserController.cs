@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace workshop_v0._1.DAL
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyPolicy")]
     public class UserController : ControllerBase
     {
         UserContext _context;
@@ -22,6 +24,7 @@ namespace workshop_v0._1.DAL
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
+            await _context.User.Include(x => x.listings).ToListAsync();
             return await _context.User.ToListAsync();
         }
 
@@ -30,6 +33,7 @@ namespace workshop_v0._1.DAL
         public async Task<ActionResult<IEnumerable<User>>> Get(int id)
         {
             User user = await _context.User.FirstOrDefaultAsync(x => x.id_user == id);
+            await _context.User.Include(x => x.listings).ToListAsync();
             if (user == null)
                 return NotFound("User doesn't exist");
             return new ObjectResult(user);

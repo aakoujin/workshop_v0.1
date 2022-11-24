@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace workshop_v0._1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyPolicy")]
     public class ListingController : ControllerBase
     {
         ListingContext _context;
@@ -22,6 +24,7 @@ namespace workshop_v0._1.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Listing>>> Get()
         {
+            await _context.Listing.Include(x => x.contents).ToListAsync();
             return await _context.Listing.ToListAsync();
         }
 
@@ -30,6 +33,7 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<Listing>>> Get(int id)
         {
             Listing listing = await _context.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+            await _context.Listing.Include(x => x.contents).ToListAsync();
             if (listing == null)
                 return NotFound("Listing doesn't exist");
             return new ObjectResult(listing);
