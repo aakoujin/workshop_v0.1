@@ -21,7 +21,7 @@ namespace workshop_v0._1.DAL
             modelBuilder.Entity<User>()
                 .HasMany(u => u.listings)
                 .WithOne(l => l.user)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

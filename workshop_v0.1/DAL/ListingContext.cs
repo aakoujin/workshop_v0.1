@@ -21,17 +21,17 @@ namespace workshop_v0._1.DAL
             modelBuilder.Entity<Listing>()
                 .HasMany(li => li.locations)
                 .WithOne(lo => lo.listing)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Listing>()
                 .HasMany(li => li.comments)
                 .WithOne(co => co.listing)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Listing>()
                 .HasMany(li => li.contents)
                 .WithOne(c => c.listing)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Listing>()
                 .HasOne(u => u.user)

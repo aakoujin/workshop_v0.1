@@ -18,7 +18,10 @@ namespace workshop_v0._1.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-          
+             modelBuilder.Entity<Content>()
+                 .HasOne(li => li.listing)
+                 .WithMany(c => c.contents)
+                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
