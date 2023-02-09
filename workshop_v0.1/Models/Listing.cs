@@ -22,6 +22,8 @@ namespace workshop_v0._1.Models
         public DateTime post_date { get; set; }
         [Display(Name = "Status")]
         public int state { get; set; } //use as marker for userId
+        public int price { get; set; }
+
         [Display(Name = "Comments")]
         public HashSet<Comment> comments { get; set;}
         [Display(Name = "Media")]
