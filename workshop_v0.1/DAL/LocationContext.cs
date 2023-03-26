@@ -14,5 +14,13 @@ namespace workshop_v0._1.DAL
 
         }
         public DbSet<Location> Location { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Location>()
+                .HasOne(li => li.listing)
+                .WithMany(lo => lo.locations)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }

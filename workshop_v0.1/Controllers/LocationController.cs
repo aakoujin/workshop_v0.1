@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,7 +21,7 @@ namespace workshop_v0._1.DAL
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<Location>>> Get()
         {
             return await _context.Location.ToListAsync();

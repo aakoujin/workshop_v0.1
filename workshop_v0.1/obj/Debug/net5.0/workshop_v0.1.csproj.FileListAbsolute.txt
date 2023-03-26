@@ -91,7 +91,6 @@ E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.IdentityModel.L
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll
-E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Newtonsoft.Json.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\System.Diagnostics.DiagnosticSource.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll
@@ -152,3 +151,13 @@ E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\runtimes\win-x64\native\s
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\runtimes\win-x86\native\sni.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.DotNet.PlatformAbstractions.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Newtonsoft.Json.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Scrutor.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Swashbuckle.AspNetCore.Annotations.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Swashbuckle.AspNetCore.Filters.dll

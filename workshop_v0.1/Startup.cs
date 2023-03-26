@@ -13,7 +13,10 @@ using workshop_v0._1.Models;
 using System.Reflection;
 using System.IO;
 using Microsoft.OpenApi.Models;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace workshop_v0._1
 {
@@ -47,6 +50,18 @@ namespace workshop_v0._1
             services.AddDbContext<UserContext>(options => options.UseSqlServer(con));
             services.AddDbContext<ContentContext>(options => options.UseSqlServer(con));
 
+            services.AddAuthentication(
+                JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("CredentialsSettings:Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
             services.AddControllers().AddJsonOptions(x => 
             x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
 
@@ -56,8 +71,17 @@ namespace workshop_v0._1
                 {
                     Version = "v0.1",
                     Title = "Workshop API",
-                    Description = "TestFort Web API workshop v0.1",
+                    Description = "Web API workshop v0.1",
                 });
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Auth header using the Bearer scheme (\"bearer {token}\")",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
         }
 
@@ -77,6 +101,8 @@ namespace workshop_v0._1
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI(c => 
