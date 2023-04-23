@@ -52,7 +52,60 @@ namespace workshop_v0._1.Controllers
 
             string token = CreateToken(user);
 
+            var refreshToken = GenerateRefreshToken();
+            SetRefreshToken(refreshToken);
+
             return Ok(token);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<string>> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (!user.RefreshToken.Equals(refreshToken))
+            {
+                return Unauthorized("Invalid refresh token");
+            }
+            else if (user.TokenExpires < DateTime.Now)
+            {
+                return Unauthorized("Token expired");
+            }
+
+            string token = CreateToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+            SetRefreshToken(newRefreshToken);
+
+            return Ok(token);
+        }
+
+        private RefreshToken GenerateRefreshToken()
+        {
+            byte[] intBytes = new byte[64];
+            RandomNumberGenerator rng = new RNGCryptoServiceProvider();
+            rng.GetBytes(intBytes);
+            
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(intBytes),
+                Expires = DateTime.Now.AddDays(7),
+                Created = DateTime.Now
+            };
+
+            return refreshToken;
+        }
+
+        private void SetRefreshToken(RefreshToken newRefreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = newRefreshToken.Expires
+            };
+            Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
+
+            user.RefreshToken = newRefreshToken.Token;
+            user.TokenCreated = newRefreshToken.Created;
+            user.TokenExpires = newRefreshToken.Expires;
         }
 
         private string CreateToken(UserLoginData user)
