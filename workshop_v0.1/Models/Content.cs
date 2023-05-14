@@ -13,7 +13,7 @@ namespace workshop_v0._1.Models
         public int id_content { get; set; }
         [Display(Name = "Post")]
         [ForeignKey("id_listing")]
-        public Listing listing { get; set; }
+        public virtual Listing listing { get; set; }
         public string media { get; set; }
     }
 }

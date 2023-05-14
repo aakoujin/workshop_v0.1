@@ -20,7 +20,9 @@ namespace workshop_v0._1.Models
         public string surname { get; set; }
 
         [Display(Name = "Listings")]
-        public HashSet<Listing> listings { get; set; }
+        public virtual HashSet<Listing> listings { get; set; }
+
+        public virtual HashSet<UserLoginData> creds { get; set; }
         
         //TODO: add session
     }

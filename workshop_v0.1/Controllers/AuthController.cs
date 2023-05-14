@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,51 +11,80 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using workshop_v0._1.DAL;
 using workshop_v0._1.Models;
 
 namespace workshop_v0._1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("MyPolicy")]
     public class AuthController : ControllerBase
     {
+        UserLoginDataContext _context;
+        UserContext _userContext;
+
         public static UserLoginData user = new UserLoginData();
         private readonly IConfiguration _configuration;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, UserLoginDataContext context, UserContext userContext)
         {
             _configuration = configuration;
+            _context = context;
+            _userContext = userContext;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<UserLoginData>> Register(UserDto request)
         {
             CreatePasswordHash(request.userPassword, out byte[] passwordHash, out byte[] passwordSalt);
+            
+            //add check for existing username
 
-            user.username = request.userLogin;
-            user.userPassword = passwordHash;
-            user.userSalt = passwordSalt;
+            User parentUser = new User();
+            UserLoginData loginData = new UserLoginData();
 
-            return Ok(user);
+            loginData.username = request.userLogin;
+            loginData.userPassword = passwordHash;
+            loginData.userSalt = passwordSalt;
+
+            parentUser.name = request.name;
+            parentUser.surname = request.surname;
+
+
+            parentUser.creds = new HashSet<UserLoginData>();
+            parentUser.creds.Add(loginData);
+
+            _userContext.User.Add(parentUser);
+            await _userContext.SaveChangesAsync();
+
+            return Ok(parentUser);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserDto request)
         {
-            if(user.username != request.userLogin)
+            UserLoginData tmpUser = await _context.UserLoginData.FirstOrDefaultAsync(x => x.username == request.userLogin);
+
+            if (tmpUser.username != request.userLogin)
             {
                 return BadRequest("Wrong credentials");
             }
 
-            if(!VerifyPasswordHash(request.userPassword, user.userPassword, user.userSalt))
+            if(!VerifyPasswordHash(request.userPassword, tmpUser.userPassword, tmpUser.userSalt))
             {
                 return BadRequest("Wrong credentials 2");
             }
 
-            string token = CreateToken(user);
+            string token = CreateToken(tmpUser);
 
             var refreshToken = GenerateRefreshToken();
             SetRefreshToken(refreshToken);
+            tmpUser.RefreshToken = refreshToken.Token;
+            tmpUser.TokenCreated = refreshToken.Created;
+            tmpUser.TokenExpires = refreshToken.Expires;
+
+            await _context.SaveChangesAsync();
 
             return Ok(token);
         }
@@ -113,7 +144,8 @@ namespace workshop_v0._1.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.username),
-                new Claim(ClaimTypes.Role, "Admin")
+                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(ClaimTypes.NameIdentifier, user.id_user.ToString())
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
@@ -123,7 +155,7 @@ namespace workshop_v0._1.Controllers
 
             var token = new JwtSecurityToken(
                 claims : claims,
-                expires : DateTime.Now.AddDays(1),
+                expires : DateTime.Now.AddDays(7),
                 signingCredentials : creds);
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);

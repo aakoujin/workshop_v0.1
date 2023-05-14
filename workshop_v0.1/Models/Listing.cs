@@ -13,7 +13,7 @@ namespace workshop_v0._1.Models
         public int id_listing { get; set; }
         [Display(Name = "Owner")]
         [ForeignKey("id_user")]
-        public User user { get; set; }
+        public virtual User user { get; set; }
         [Display(Name = "Title")]
         public string post_name { get; set; }
         [Display(Name = "Description")]
@@ -25,10 +25,10 @@ namespace workshop_v0._1.Models
         public int price { get; set; }
 
         [Display(Name = "Comments")]
-        public HashSet<Comment> comments { get; set;}
+        public virtual HashSet<Comment> comments { get; set;}
         [Display(Name = "Media")]
         public HashSet<Content> contents { get; set; }
         [Display(Name = "Location")]
-        public HashSet<Location> locations { get; set; }
+        public virtual HashSet<Location> locations { get; set; }
     }
 }
