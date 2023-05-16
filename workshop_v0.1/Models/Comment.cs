@@ -11,7 +11,7 @@ namespace workshop_v0._1.Models
         [Key]
         public int id_comment { get; set; }
         [Display(Name = "Post")]
-        public Listing listing { get; set; }
+        public virtual Listing listing { get; set; }
         [Display(Name = "Comment")]
         public string comment_text { get; set; }
     }

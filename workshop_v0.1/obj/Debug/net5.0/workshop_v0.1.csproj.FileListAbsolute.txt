@@ -161,3 +161,5 @@ E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Scrutor.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Swashbuckle.AspNetCore.Annotations.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Swashbuckle.AspNetCore.Filters.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Castle.Core.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll

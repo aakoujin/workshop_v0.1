@@ -11,6 +11,7 @@ namespace workshop_v0._1.Models
     {
         [Key]
         public int id_content { get; set; }
+        public int id_listing { get; set; }
         [Display(Name = "Post")]
         [ForeignKey("id_listing")]
         public virtual Listing listing { get; set; }

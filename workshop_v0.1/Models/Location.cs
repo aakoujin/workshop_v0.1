@@ -11,9 +11,10 @@ namespace workshop_v0._1.Models
     {
         [Key]
         public int id_location { get; set; }
+        public int id_listing { get; set; }
         [Display(Name = "Listing")]
         [ForeignKey("id_listing")]
-        public Listing listing { get; set; }
+        public virtual Listing listing { get; set; }
         [Display(Name = "Country")]
         public string country { get; set; }
         [Display(Name = "State/Region")]

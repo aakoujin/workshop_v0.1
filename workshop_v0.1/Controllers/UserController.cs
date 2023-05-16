@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using workshop_v0._1.Models;
 
@@ -21,19 +23,19 @@ namespace workshop_v0._1.DAL
             _context = context;
         }
 
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            await _context.User.Include(x => x.listings).ToListAsync();
+            //await _context.User.Include(x => x.listings).ToListAsync();
             return await _context.User.ToListAsync();
         }
-
-        //api/offers/1
+    
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<User>>> Get(int id)
         {
             User user = await _context.User.FirstOrDefaultAsync(x => x.id_user == id);
-            await _context.User.Include(x => x.listings).ToListAsync();
+            //await _context.User.Include(x => x.listings).ToListAsync();
             if (user == null)
                 return NotFound("User doesn't exist");
             return new ObjectResult(user);

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using workshop_v0._1.DAL;
 using workshop_v0._1.Models;
@@ -31,6 +33,21 @@ namespace workshop_v0._1.Controllers
             return await _context.Listing.ToListAsync();
         }
 
+
+        [HttpGet("userlistings"), Authorize]
+        public async Task<ActionResult<IEnumerable<Listing>>> GetByUserClaim()
+        {
+            int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+      
+            List<Listing> listings = await _context.Listing.Where(x => x.id_user == id).ToListAsync();
+            await _context.Listing.Include(x => x.contents).ToListAsync();
+
+            if (listings.Count == 0)
+                return NotFound("No listings yet");
+            return new ObjectResult(listings);
+        }
+
+
         //api/offers/1
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Listing>>> Get(int id)
@@ -51,10 +68,11 @@ namespace workshop_v0._1.Controllers
             if (listing.user == null && listing.state != 0)
             {
                 User tmpUser = await _userContext.User.FirstOrDefaultAsync(x => x.id_user == listing.state);
-                
+
                 if (tmpUser == null) { return BadRequest("User does not exit"); }
 
                 listing.user = tmpUser;
+                listing.post_date = DateTime.Now;
                 tmpUser.listings = new HashSet<Listing>();
                 tmpUser.listings.Add(listing);
                 _userContext.User.Update(tmpUser);

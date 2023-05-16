@@ -40,6 +40,12 @@ namespace workshop_v0._1.Controllers
             CreatePasswordHash(request.userPassword, out byte[] passwordHash, out byte[] passwordSalt);
             
             //add check for existing username
+            /*
+            UserLoginData duplicate = await _context.UserLoginData.FirstOrDefaultAsync(x => x.username.Equals(request.userLogin));
+            if (duplicate.username.Equals(request.userLogin))
+            {
+                return BadRequest(request.userLogin + " is already taken");
+            }*/
 
             User parentUser = new User();
             UserLoginData loginData = new UserLoginData();
@@ -62,7 +68,7 @@ namespace workshop_v0._1.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login(UserLoginDto request)
         {
             UserLoginData tmpUser = await _context.UserLoginData.FirstOrDefaultAsync(x => x.username == request.userLogin);
 

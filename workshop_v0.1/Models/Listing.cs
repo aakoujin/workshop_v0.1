@@ -11,6 +11,7 @@ namespace workshop_v0._1.Models
     {
         [Key]
         public int id_listing { get; set; }
+        public int id_user { get; set; }
         [Display(Name = "Owner")]
         [ForeignKey("id_user")]
         public virtual User user { get; set; }
@@ -27,7 +28,7 @@ namespace workshop_v0._1.Models
         [Display(Name = "Comments")]
         public virtual HashSet<Comment> comments { get; set;}
         [Display(Name = "Media")]
-        public HashSet<Content> contents { get; set; }
+        public virtual HashSet<Content> contents { get; set; }
         [Display(Name = "Location")]
         public virtual HashSet<Location> locations { get; set; }
     }
