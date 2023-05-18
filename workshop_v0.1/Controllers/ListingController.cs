@@ -33,12 +33,10 @@ namespace workshop_v0._1.Controllers
             return await _context.Listing.ToListAsync();
         }
 
-
         [HttpGet("userlistings"), Authorize]
         public async Task<ActionResult<IEnumerable<Listing>>> GetByUserClaim()
         {
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-      
             List<Listing> listings = await _context.Listing.Where(x => x.id_user == id).ToListAsync();
             await _context.Listing.Include(x => x.contents).ToListAsync();
 

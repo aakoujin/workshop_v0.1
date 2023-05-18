@@ -34,8 +34,9 @@ namespace workshop_v0._1
         {
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
+                builder.WithOrigins("http://localhost:3000", "http://localhost:42999", "localhost:3000")
+                       .AllowCredentials()
+                       .WithMethods("POST", "PUT", "PATCH", "GET", "DELETE", "OPTIONS")
                        .AllowAnyHeader();
             }));
 
@@ -103,15 +104,16 @@ namespace workshop_v0._1
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+           
             app.UseSwagger();
             app.UseSwaggerUI(c => 
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Workshop API");
             });
-            app.UseCors();
+            app.UseCors("MyPolicy");
 
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
