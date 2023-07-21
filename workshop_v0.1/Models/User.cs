@@ -19,6 +19,10 @@ namespace workshop_v0._1.Models
         [Required(AllowEmptyStrings = false)]
         public string surname { get; set; }
 
+        public string phonenumber { get; set; }
+
+        public string email { get; set; }
+
         [Display(Name = "Listings")]
         public virtual HashSet<Listing> listings { get; set; }
 

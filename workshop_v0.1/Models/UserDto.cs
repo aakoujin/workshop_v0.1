@@ -9,6 +9,8 @@ namespace workshop_v0._1.Models
     {
         public string name { get; set; }
         public string surname { get; set; }
+        public string phonenumber { get; set; }
+        public string email { get; set; }
         public string userLogin { get; set; }
         public string userPassword { get; set; }
     }

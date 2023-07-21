@@ -40,12 +40,16 @@ namespace workshop_v0._1.Controllers
             CreatePasswordHash(request.userPassword, out byte[] passwordHash, out byte[] passwordSalt);
             
             //add check for existing username
-            /*
+            
             UserLoginData duplicate = await _context.UserLoginData.FirstOrDefaultAsync(x => x.username.Equals(request.userLogin));
-            if (duplicate.username.Equals(request.userLogin))
+            if (duplicate != null)
             {
-                return BadRequest(request.userLogin + " is already taken");
-            }*/
+
+                if (duplicate.username == request.userLogin)
+                {
+                    return BadRequest(request.userLogin + " username is already taken");
+                }
+            }
 
             User parentUser = new User();
             UserLoginData loginData = new UserLoginData();
@@ -54,8 +58,12 @@ namespace workshop_v0._1.Controllers
             loginData.userPassword = passwordHash;
             loginData.userSalt = passwordSalt;
 
+          
+
             parentUser.name = request.name;
             parentUser.surname = request.surname;
+            parentUser.phonenumber = request.phonenumber;
+            parentUser.email = request.email;
 
 
             parentUser.creds = new HashSet<UserLoginData>();
