@@ -57,30 +57,29 @@ namespace workshop_v0._1.Controllers
             return new ObjectResult(listing);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public async Task<ActionResult<Listing>> Post(Listing listing)
         {
-            if (listing == null)
-                return BadRequest("Can't add an empty offer");
+            int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (listing.user == null && listing.state != 0)
-            {
-                User tmpUser = await _userContext.User.FirstOrDefaultAsync(x => x.id_user == listing.state);
+            if (listing == null) { return BadRequest("Can't add an empty offer"); }
+               
 
-                if (tmpUser == null) { return BadRequest("User does not exit"); }
+            User tmpUser = await _userContext.User.FirstOrDefaultAsync(x => x.id_user == id);
 
-                listing.user = tmpUser;
-                listing.post_date = DateTime.Now;
-                tmpUser.listings = new HashSet<Listing>();
-                tmpUser.listings.Add(listing);
-                _userContext.User.Update(tmpUser);
-                await _userContext.SaveChangesAsync();
-                return Ok(listing);
-            }
-
-            _context.Listing.Add(listing);
-            await _context.SaveChangesAsync();
+            //if (tmpUser == null) { return BadRequest("User does not exit"); }
+            
+            listing.user = tmpUser;
+            listing.post_date = DateTime.Now; 
+            tmpUser.listings = new HashSet<Listing>();
+            tmpUser.listings.Add(listing);
+            _userContext.User.Update(tmpUser);
+            await _userContext.SaveChangesAsync();   
             return Ok(listing);
+        
+            //_context.Listing.Add(listing);
+            //await _context.SaveChangesAsync();
+            //return Ok(listing);
 
         }
 
