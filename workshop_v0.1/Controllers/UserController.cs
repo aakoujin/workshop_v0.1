@@ -24,11 +24,15 @@ namespace workshop_v0._1.DAL
         }
 
         
-        [HttpGet]
+        [HttpGet("userInfo"), Authorize]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            //await _context.User.Include(x => x.listings).ToListAsync();
-            return await _context.User.ToListAsync();
+            int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            User user = await _context.User.FirstOrDefaultAsync(x => x.id_user == id);
+            if (user == null)
+                return NotFound("User doesn't exist");
+
+            return new ObjectResult(user);
         }
     
         [HttpGet("{id}")]
