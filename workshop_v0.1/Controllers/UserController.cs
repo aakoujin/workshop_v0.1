@@ -45,6 +45,24 @@ namespace workshop_v0._1.DAL
             return new ObjectResult(user);
         }
 
+
+        [HttpGet("postedby/{id}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetPostedBy(int id)
+        {
+            User user = await _context.User.FirstOrDefaultAsync(x => x.id_user == id);
+
+            if (user == null)
+                return NotFound("User doesn't exist");
+
+            PostedByDto author = new()
+            {
+                name = user.name,
+                surname = user.surname,
+                phonenumber = user.phonenumber
+            };
+            return new ObjectResult(author);
+        }
+
         [HttpPost]
         public async Task<ActionResult<User>> Post(User user)
         {
