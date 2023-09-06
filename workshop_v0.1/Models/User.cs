@@ -27,6 +27,8 @@ namespace workshop_v0._1.Models
         public virtual HashSet<Listing> listings { get; set; }
 
         public virtual HashSet<UserLoginData> creds { get; set; }
+
+        public virtual HashSet<SavedListing> savedListings { get; set; }
         
         //TODO: add session
     }

@@ -22,6 +22,11 @@ namespace workshop_v0._1.DAL
                .HasMany(u => u.creds)
                .WithOne(c => c.user)
                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.savedListings)
+                .WithOne(s => s.User)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

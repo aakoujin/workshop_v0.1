@@ -51,6 +51,7 @@ namespace workshop_v0._1
             services.AddDbContext<UserContext>(options => options.UseSqlServer(con));
             services.AddDbContext<ContentContext>(options => options.UseSqlServer(con));
             services.AddDbContext<UserLoginDataContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<SavedListingContext>(options => options.UseSqlServer(con));
 
             services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme)
