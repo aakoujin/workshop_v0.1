@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using workshop_v0._1.Models;
 
 namespace workshop_v0._1.DAL
@@ -37,6 +34,14 @@ namespace workshop_v0._1.DAL
                 .HasOne(u => u.user)
                 .WithMany(li => li.listings)
                 .OnDelete(DeleteBehavior.NoAction);
+
+
+            modelBuilder.Entity<Listing>()
+                .HasMany(l => l.tags)
+                .WithMany(t => t.listings)
+                .UsingEntity<ListingTag>(
+                l => l.HasOne<Tag>().WithMany().HasForeignKey(e => e.id_tag),
+                r => r.HasOne<Listing>().WithMany().HasForeignKey(e => e.id_listing));
         }
     }
 }

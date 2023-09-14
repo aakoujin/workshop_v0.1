@@ -31,5 +31,6 @@ namespace workshop_v0._1.Models
         public virtual HashSet<Content> contents { get; set; }
         [Display(Name = "Location")]
         public virtual HashSet<Location> locations { get; set; }
+        public virtual HashSet<Tag> tags { get; set; }
     }
 }

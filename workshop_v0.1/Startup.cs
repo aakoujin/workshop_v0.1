@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Filters;
+using Newtonsoft.Json;
 
 namespace workshop_v0._1
 {
@@ -45,13 +46,15 @@ namespace workshop_v0._1
             var con = Configuration.GetConnectionString("OffersDbConnection");
            
             //EF
-            services.AddDbContext<OfferContext>(options => options.UseSqlServer(con));
+            
             services.AddDbContext<ListingContext>(options => options.UseSqlServer(con));
             services.AddDbContext<LocationContext>(options => options.UseSqlServer(con));
             services.AddDbContext<UserContext>(options => options.UseSqlServer(con));
             services.AddDbContext<ContentContext>(options => options.UseSqlServer(con));
             services.AddDbContext<UserLoginDataContext>(options => options.UseSqlServer(con));
             services.AddDbContext<SavedListingContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<TagContext>(options => options.UseSqlServer(con));
+            services.AddDbContext<AppDBContext>(options => options.UseSqlServer(con));
 
             services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme)
@@ -67,6 +70,11 @@ namespace workshop_v0._1
 
             services.AddControllers().AddJsonOptions(x => 
             x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
+
+            /*services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });*/
 
             services.AddSwaggerGen(c => 
             {

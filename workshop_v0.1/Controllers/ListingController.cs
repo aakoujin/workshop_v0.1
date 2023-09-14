@@ -19,18 +19,23 @@ namespace workshop_v0._1.Controllers
     {
         ListingContext _context;
         UserContext _userContext;
+        TagContext _tagContext;
+        AppDBContext _appDBContext;
 
-        public ListingController(ListingContext context, UserContext userContext)
+        public ListingController(ListingContext context, UserContext userContext, TagContext tagContext, AppDBContext appDBContext)
         {
             _context = context;
             _userContext = userContext;
+            _tagContext = tagContext;
+            _appDBContext = appDBContext;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Listing>>> Get()
         {
-            await _context.Listing.Include(x => x.contents).ToListAsync();
-            return await _context.Listing.ToListAsync();
+            await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
+            //await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
+            return await _appDBContext.Listing.ToListAsync();
         }
 
         [HttpGet("userlistings"), Authorize]
@@ -50,11 +55,45 @@ namespace workshop_v0._1.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Listing>>> Get(int id)
         {
-            Listing listing = await _context.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
-            await _context.Listing.Include(x => x.contents).ToListAsync();
+            Listing listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+            await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
+
             if (listing == null)
                 return NotFound("Listing doesn't exist");
             return new ObjectResult(listing);
+        }
+
+        [HttpGet("similar/{id}")]
+        public async Task<ActionResult<IEnumerable<Listing>>> GetRelatedListings(int id)
+        {
+            Listing tmp = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+            await _appDBContext.Listing.Include(x=> x.tags).ToListAsync();
+            
+            HashSet<Tag> requestTags = new(tmp.tags);
+            /*
+            if(requestTags.Count > 2){
+                requestTags.RemoveWhere(x => (x.id_tag == 1) || (x.id_tag == 2));
+
+                int tmpId = requestTags.OrderBy(x => x.id_tag).First().id_tag;
+
+                Tag targetTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.id_tag == tmpId);
+                    //requestTags.OrderBy(x => x.id_tag).First();
+                
+
+                return await _appDBContext.Listing.Where(x => x.tags.Contains(targetTag)).Take(10).Include(x => x.contents).ToListAsync();
+            }else if(requestTags.Count == 1)
+            {
+                Tag targetTag = requestTags.First();
+
+                return await _appDBContext.Listing.Where(x => x.tags.Contains(targetTag)).Include(x => x.contents).ToListAsync();
+            }
+            else
+            {
+                return await _appDBContext.Listing.Take(10).Include(x => x.contents).ToListAsync();
+            }*/
+
+            return await _appDBContext.Listing.Take(10).Include(x => x.contents).ToListAsync();
         }
 
         [HttpPost, Authorize]
@@ -67,19 +106,38 @@ namespace workshop_v0._1.Controllers
 
             User tmpUser = await _userContext.User.FirstOrDefaultAsync(x => x.id_user == id);
 
-            //if (tmpUser == null) { return BadRequest("User does not exit"); }
+            //fix tag duplication
+            HashSet<Tag> tmpTags = new();
             
+            foreach(Tag t in listing.tags)
+            {
+                Tag individualTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.id_tag == t.id_tag);
+                individualTag.listings = new HashSet<Listing>();
+                individualTag.listings.Add(listing);
+                tmpTags.Add(individualTag);
+                _appDBContext.Tag.Update(individualTag);
+            }
+            listing.tags = null;
+
+            listing.tags = new HashSet<Tag>(tmpTags);
             listing.user = tmpUser;
-            listing.post_date = DateTime.Now; 
+            listing.post_date = DateTime.Now;
+
             tmpUser.listings = new HashSet<Listing>();
             tmpUser.listings.Add(listing);
-            _userContext.User.Update(tmpUser);
-            await _userContext.SaveChangesAsync();   
-            return Ok(listing);
-        
+
+
+            //_userContext.User.Update(tmpUser);
+            //await _userContext.SaveChangesAsync();   
+
             //_context.Listing.Add(listing);
-            //await _context.SaveChangesAsync();
-            //return Ok(listing);
+            //await _context.SaveChangesAsync();         
+            _appDBContext.Listing.Add(listing);
+            _appDBContext.User.Update(tmpUser);
+            
+            await _appDBContext.SaveChangesAsync();
+
+            return Ok(listing);
 
         }
 

@@ -41,9 +41,11 @@ namespace workshop_v0._1.Controllers
             return savedListing;
         }
 
-        [HttpGet("checkSaved/{idListing}"), Authorize]
+        [HttpGet("checkSaved/{idListing}")]
         public async Task<ActionResult<SavedListing>> CheckSaved(int idListing)
         {
+            if (User.FindFirstValue(ClaimTypes.NameIdentifier) == null) { return Ok(0); } //refactor to proper error handling
+
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             List<SavedListing> savedListings = await _context.SavedListing.Where(x => (x.id_listing == idListing && x.id_user == id)).ToListAsync();
 
