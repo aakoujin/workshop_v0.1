@@ -56,11 +56,17 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<Listing>>> Get(int id)
         {
             Listing listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+            listing.state++;
+
             await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
             await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
 
+            _appDBContext.Listing.Update(listing);
+            await _appDBContext.SaveChangesAsync();
+
             if (listing == null)
                 return NotFound("Listing doesn't exist");
+
             return new ObjectResult(listing);
         }
 
@@ -71,27 +77,7 @@ namespace workshop_v0._1.Controllers
             await _appDBContext.Listing.Include(x=> x.tags).ToListAsync();
             
             HashSet<Tag> requestTags = new(tmp.tags);
-            /*
-            if(requestTags.Count > 2){
-                requestTags.RemoveWhere(x => (x.id_tag == 1) || (x.id_tag == 2));
-
-                int tmpId = requestTags.OrderBy(x => x.id_tag).First().id_tag;
-
-                Tag targetTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.id_tag == tmpId);
-                    //requestTags.OrderBy(x => x.id_tag).First();
-                
-
-                return await _appDBContext.Listing.Where(x => x.tags.Contains(targetTag)).Take(10).Include(x => x.contents).ToListAsync();
-            }else if(requestTags.Count == 1)
-            {
-                Tag targetTag = requestTags.First();
-
-                return await _appDBContext.Listing.Where(x => x.tags.Contains(targetTag)).Include(x => x.contents).ToListAsync();
-            }
-            else
-            {
-                return await _appDBContext.Listing.Take(10).Include(x => x.contents).ToListAsync();
-            }*/
+            //update algorithm to fetch by set of tags
 
             return await _appDBContext.Listing.Take(10).Include(x => x.contents).ToListAsync();
         }
