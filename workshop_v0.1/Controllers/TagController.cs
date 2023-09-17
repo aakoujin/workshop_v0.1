@@ -29,6 +29,14 @@ namespace workshop_v0._1.Controllers
             return await _context.Tag.ToListAsync(); ;
         }
 
+        [HttpGet("/api/Tag/getSubTags/{tag}")]
+        public async Task<ActionResult<IEnumerable<Tag>>> GetSubTags(string tag)
+        {
+            Tag tmp = await _context.Tag.FirstOrDefaultAsync(x => x.tag_name == tag);
+
+            return await _context.Tag.Where(x => x.id_parent == tmp.id_tag).ToListAsync(); ;
+        }
+
         [HttpPost]
         public async Task<ActionResult<Tag>> Post(Tag tag)
         {

@@ -68,6 +68,7 @@ namespace workshop_v0._1.Controllers
                 return NotFound("Listing doesn't exist");
 
             return new ObjectResult(listing);
+            //return Ok(listing);
         }
 
         [HttpGet("similar/{id}")]
@@ -97,7 +98,7 @@ namespace workshop_v0._1.Controllers
             
             foreach(Tag t in listing.tags)
             {
-                Tag individualTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.id_tag == t.id_tag);
+                Tag individualTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.tag_name == t.tag_name);
                 individualTag.listings = new HashSet<Listing>();
                 individualTag.listings.Add(listing);
                 tmpTags.Add(individualTag);
