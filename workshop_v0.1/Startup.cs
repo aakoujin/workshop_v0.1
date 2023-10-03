@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Filters;
 using Newtonsoft.Json;
+using workshop_v0._1.Hubs;
 
 namespace workshop_v0._1
 {
@@ -67,6 +68,8 @@ namespace workshop_v0._1
                         ValidateAudience = false
                     };
                 });
+
+            services.AddSignalR();
 
             //services.AddControllers().AddJsonOptions(x => 
             //x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
@@ -133,6 +136,7 @@ namespace workshop_v0._1
             {
                 endpoints.MapControllers();
                 //endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }

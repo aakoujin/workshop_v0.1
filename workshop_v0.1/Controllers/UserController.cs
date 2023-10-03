@@ -17,10 +17,12 @@ namespace workshop_v0._1.DAL
     public class UserController : ControllerBase
     {
         UserContext _context;
-        
-        public UserController (UserContext context)
+        AppDBContext _appDBContext;
+
+        public UserController (UserContext context, AppDBContext appDBContext)
         {
             _context = context;
+            _appDBContext = appDBContext;
         }
 
         
@@ -49,7 +51,8 @@ namespace workshop_v0._1.DAL
         [HttpGet("postedby/{id}")]
         public async Task<ActionResult<IEnumerable<User>>> GetPostedBy(int id)
         {
-            User user = await _context.User.FirstOrDefaultAsync(x => x.id_user == id);
+            User user = await _appDBContext.User.FirstOrDefaultAsync(x => x.id_user == id);
+            await _appDBContext.User.Include(x => x.creds).ToListAsync();
 
             if (user == null)
                 return NotFound("User doesn't exist");
@@ -58,7 +61,8 @@ namespace workshop_v0._1.DAL
             {
                 name = user.name,
                 surname = user.surname,
-                phonenumber = user.phonenumber
+                phonenumber = user.phonenumber,
+                username = user.creds.First().username
             };
             return new ObjectResult(author);
         }
