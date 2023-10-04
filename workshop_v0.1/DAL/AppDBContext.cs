@@ -20,6 +20,8 @@ namespace workshop_v0._1.DAL
         public DbSet<Tag> Tag { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<UserLoginData> UserLoginData { get; set; }
+        public DbSet<ChatRoom> ChatRoom { get; set; }
+        public DbSet<ChatRoomMessage> ChatRoomMessage { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,6 +82,11 @@ namespace workshop_v0._1.DAL
              .HasOne(uld => uld.user)
              .WithMany(u => u.creds)
              .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ChatRoom>()
+                .HasMany(cr => cr.chat_room_messages)
+                .WithOne(crm => crm.chat_room)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

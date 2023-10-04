@@ -16,10 +16,18 @@ namespace workshop_v0._1.Hubs
         }
 
         /*
-        accept 2 parameters in userConnection: username, listing
-         
-        generate a room by combining: userId from Auth, listingId, username from FE
+        persist room in DB
+
+        retrieve room connection string for SendMessage. Send message to the room 
+
+        link rooms to user_id. Display all chats(rooms) on separate page
          */
+
+        public async Task SendMessage(string message)
+        {
+
+            await Clients.All.SendAsync("ReceiveMessage", message);
+        }
 
         public async Task JoinRoom(ChatConnection chatConnection)
         {
