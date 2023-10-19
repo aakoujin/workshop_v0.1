@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,30 @@ namespace workshop_v0._1.Controllers
             
 
             return chatRoom;
+        }
+
+        [HttpGet("getOutcommingChats"), Authorize]
+        public async Task<ActionResult<IEnumerable<ChatRoom>>> GetOutcommingChats()
+        {
+            int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            return await _appDBContext.ChatRoom.Where(x => x.first_user == id).ToListAsync();
+        }
+
+        [HttpGet("getIncommingChats"), Authorize]
+        public async Task<ActionResult<IEnumerable<ChatRoom>>> GetIncommingChats()
+        {
+            int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            return await _appDBContext.ChatRoom.Where(x => x.second_user == id).ToListAsync();
+        }
+
+        [HttpGet("{id}"), Authorize]
+        public async Task<ActionResult<ChatRoom>> GetChat(int id)
+        {
+            int id_user = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            return await _appDBContext.ChatRoom.FirstOrDefaultAsync(x => x.id_chat_room == id);
         }
     }
 }
