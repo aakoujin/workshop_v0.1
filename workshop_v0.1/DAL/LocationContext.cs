@@ -20,7 +20,7 @@ namespace workshop_v0._1.DAL
             modelBuilder.Entity<Location>()
                 .HasOne(li => li.listing)
                 .WithMany(lo => lo.locations)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

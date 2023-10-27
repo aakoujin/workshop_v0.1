@@ -25,8 +25,8 @@ namespace workshop_v0._1.Models
         public int state { get; set; } //use as marker for userId
         public int price { get; set; }
 
-        [Display(Name = "Comments")]
-        public virtual HashSet<Comment> comments { get; set;}
+        //[Display(Name = "Comments")]
+       // public virtual HashSet<Comment> comments { get; set;}
         [Display(Name = "Media")]
         public virtual HashSet<Content> contents { get; set; }
         [Display(Name = "Location")]

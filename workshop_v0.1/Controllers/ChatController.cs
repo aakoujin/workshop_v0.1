@@ -121,6 +121,11 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<ChatRoomMessage>>> GetChatHistory(ChatMessageDto chatMessageDto)
         {
             ChatRoom tmp = await _appDBContext.ChatRoom.FirstOrDefaultAsync(x => x.connection_string.Equals(chatMessageDto.connection_string));
+
+            if (tmp == null)
+            {
+                return new List<ChatRoomMessage>();
+            }
            
             return await _appDBContext.ChatRoomMessage.Where(x => x.chat_room_id == tmp.id_chat_room).ToListAsync();
         }

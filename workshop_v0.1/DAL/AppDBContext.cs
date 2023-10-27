@@ -30,10 +30,10 @@ namespace workshop_v0._1.DAL
                 .WithOne(lo => lo.listing)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Listing>()
+            /*modelBuilder.Entity<Listing>()
                 .HasMany(li => li.comments)
                 .WithOne(co => co.listing)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade);*/
 
             modelBuilder.Entity<Listing>()
                 .HasMany(li => li.contents)
@@ -88,5 +88,7 @@ namespace workshop_v0._1.DAL
                 .WithOne(crm => crm.chat_room)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+
+        
     }
 }

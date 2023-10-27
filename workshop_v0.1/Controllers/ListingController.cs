@@ -35,15 +35,19 @@ namespace workshop_v0._1.Controllers
         {
             await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
             //await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
-            return await _appDBContext.Listing.ToListAsync();
+            var listings = await _appDBContext.Listing.OrderByDescending(x => x.id_listing).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
+
+            return listings;
         }
 
         [HttpGet("userlistings"), Authorize]
         public async Task<ActionResult<IEnumerable<Listing>>> GetByUserClaim()
         {
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            List<Listing> listings = await _context.Listing.Where(x => x.id_user == id).ToListAsync();
+            List<Listing> listings = await _context.Listing.Where(x => x.id_user == id).OrderByDescending(x => x.id_listing).ToListAsync();
             await _context.Listing.Include(x => x.contents).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
 
             if (listings.Count == 0)
                 return NotFound("No listings yet");
@@ -56,16 +60,23 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<Listing>>> Get(int id)
         {
             Listing listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+
             listing.state++;
 
             await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
             await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
 
             _appDBContext.Listing.Update(listing);
             await _appDBContext.SaveChangesAsync();
 
             if (listing == null)
                 return NotFound("Listing doesn't exist");
+
+            foreach (Tag tag in listing.tags)
+            {
+                tag.listings = null;
+            }
 
             return new ObjectResult(listing);
             //return Ok(listing);
@@ -80,7 +91,7 @@ namespace workshop_v0._1.Controllers
             HashSet<Tag> requestTags = new(tmp.tags);
             //update algorithm to fetch by set of tags
 
-            return await _appDBContext.Listing.Take(10).Include(x => x.contents).ToListAsync();
+            return await _appDBContext.Listing.Take(10).Include(x => x.contents).OrderByDescending(x => x.id_listing).ToListAsync();
         }
 
         [HttpPost, Authorize]
