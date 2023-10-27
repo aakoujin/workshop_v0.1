@@ -153,16 +153,16 @@ namespace workshop_v0._1.Controllers
             return Ok(listing);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<ActionResult<Listing>> Delete(int id)
         {
-            Listing listing = await _context.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+            Listing listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
             if (listing == null)
                 return NotFound();
 
 
-            _context.Listing.Remove(listing);
-            await _context.SaveChangesAsync();
+            _appDBContext.Listing.Remove(listing);
+            await _appDBContext.SaveChangesAsync();
             return Ok(listing);
         }
 
