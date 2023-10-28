@@ -123,13 +123,7 @@ namespace workshop_v0._1.Controllers
 
             tmpUser.listings = new HashSet<Listing>();
             tmpUser.listings.Add(listing);
-
-
-            //_userContext.User.Update(tmpUser);
-            //await _userContext.SaveChangesAsync();   
-
-            //_context.Listing.Add(listing);
-            //await _context.SaveChangesAsync();         
+       
             _appDBContext.Listing.Add(listing);
             _appDBContext.User.Update(tmpUser);
             
@@ -139,24 +133,74 @@ namespace workshop_v0._1.Controllers
 
         }
 
-        [HttpPut]
-        public async Task<ActionResult<Listing>> Put(Listing listing)
+        [HttpPut, Authorize]
+        public async Task<ActionResult<Listing>> Put(UpdatedListingDto listing)
         {
+            int user_id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             if (listing == null)
                 return BadRequest();
 
-            if (!_context.Listing.Any(x => x.id_listing == listing.id_listing))
-                return NotFound();
+            Listing tmp = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == listing.id_listing);
+            await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
 
-            _context.Update(listing);
-            await _context.SaveChangesAsync();
-            return Ok(listing);
+
+            if (tmp == null)
+            {
+                return NotFound();
+            }
+
+            if (user_id != tmp.id_user)
+            {
+                return BadRequest("Cannot delete other users listing");
+            }
+            
+            tmp.post_name = listing.post_name;
+            tmp.post_date = listing.post_date;
+            tmp.post_desc = listing.post_desc;
+            tmp.price = tmp.price;
+            tmp.locations = listing.locations;
+            tmp.post_date = DateTime.Now;
+            
+
+            foreach(Tag t in tmp.tags)
+            {
+                foreach (Tag n in listing.tags)
+                {
+                    if (t.tag_name.Equals(n.tag_name))
+                    {
+                        listing.tags.Remove(n);
+                    }
+                }
+            }
+
+
+            foreach (Tag t in listing.tags)
+            {
+                Tag individualTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.tag_name == t.tag_name);
+                individualTag.listings = new HashSet<Listing>();
+                individualTag.listings.Add(tmp);
+                tmp.tags.Add(individualTag);
+                _appDBContext.Tag.Update(individualTag); 
+            }
+            
+
+            _appDBContext.Update(tmp);
+            await _appDBContext.SaveChangesAsync();
+            return Ok(tmp);
         }
 
         [HttpDelete("{id}"), Authorize]
         public async Task<ActionResult<Listing>> Delete(int id)
         {
+            int user_id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             Listing listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
+            if (user_id != listing.id_user)
+            {
+                return BadRequest("Cannot delete other users listing");
+            }
+
             if (listing == null)
                 return NotFound();
 
