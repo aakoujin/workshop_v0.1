@@ -126,7 +126,7 @@ namespace workshop_v0._1.Controllers
        
             _appDBContext.Listing.Add(listing);
             _appDBContext.User.Update(tmpUser);
-            
+
             await _appDBContext.SaveChangesAsync();
 
             return Ok(listing);
@@ -144,6 +144,7 @@ namespace workshop_v0._1.Controllers
             Listing tmp = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == listing.id_listing);
             await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
             await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
+            await _appDBContext.Tag.Include(x => x.listings).ToListAsync();
 
 
             if (tmp == null)
@@ -179,7 +180,7 @@ namespace workshop_v0._1.Controllers
             foreach (Tag t in listing.tags)
             {
                 Tag individualTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.tag_name == t.tag_name);
-                individualTag.listings = new HashSet<Listing>();
+                //individualTag.listings = new HashSet<Listing>();
                 individualTag.listings.Add(tmp);
                 tmp.tags.Add(individualTag);
                 _appDBContext.Tag.Update(individualTag); 
