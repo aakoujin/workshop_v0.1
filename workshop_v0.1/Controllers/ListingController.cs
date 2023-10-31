@@ -19,15 +19,42 @@ namespace workshop_v0._1.Controllers
     {
         ListingContext _context;
         UserContext _userContext;
-        TagContext _tagContext;
         AppDBContext _appDBContext;
 
-        public ListingController(ListingContext context, UserContext userContext, TagContext tagContext, AppDBContext appDBContext)
+        public ListingController(ListingContext context, UserContext userContext, AppDBContext appDBContext)
         {
             _context = context;
             _userContext = userContext;
-            _tagContext = tagContext;
             _appDBContext = appDBContext;
+        }
+
+        [HttpGet("withPage/{page}")]
+        public async Task<ActionResult<ListingResponse>> GetListings(int page)
+        {
+            if (_appDBContext.Listing == null)
+                return NotFound();
+
+            var pageResults = 12f;
+            var pageCount = Math.Ceiling(_appDBContext.Listing.Count() / pageResults);
+
+            await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
+
+            var listings = await _appDBContext.Listing
+                .OrderByDescending(x => x.id_listing)
+                .Skip((page - 1) * (int)pageResults)
+                .Take((int)pageResults)
+                .ToListAsync();
+
+            var response = new ListingResponse
+            {
+                listings = listings,
+                currentPage = page,
+                pages = (int)pageCount
+            };
+
+
+            return response;
         }
 
         [HttpGet]
