@@ -57,6 +57,109 @@ namespace workshop_v0._1.Controllers
             return response;
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<ListingResponse>>> Search(
+            [FromQuery] string text_search, [FromQuery] double? min, [FromQuery] double? max,
+            [FromQuery] string country, [FromQuery] string city, [FromQuery] string state,
+            [FromQuery] string p_code, [FromQuery] int page)
+        {
+            try
+            {
+                if (min.HasValue && max.HasValue && min > max)
+                {
+                    return BadRequest("Min cannot be greater than Max");
+                }
+
+                IQueryable<Listing> query = _appDBContext.Listing;
+
+                await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
+                await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
+
+                if (!string.IsNullOrEmpty(text_search))
+                {
+                    query = query.Where(x => x.post_name.Contains(text_search) || x.post_desc.Contains(text_search));
+                }
+
+                if (min.HasValue)
+                {
+                    query = query.Where(x => x.price >= min);
+                }
+
+                if (max.HasValue)
+                {
+                    query = query.Where(x => x.price <= max);
+                }
+
+                if (!string.IsNullOrEmpty(country))
+                {
+                    query = query.Where(x => x.locations.First().country == country);
+                }
+
+                if (!string.IsNullOrEmpty(city))
+                {
+                    query = query.Where(x => x.locations.First().city == city);
+                }
+
+                if (!string.IsNullOrEmpty(state))
+                {
+                    query = query.Where(x => x.locations.First().state == state);
+                }
+
+                if (!string.IsNullOrEmpty(p_code))
+                {
+                    query = query.Where(x => x.locations.First().postalCode == p_code);
+                }
+
+                if (text_search == null && min == null && max == null && country == null && city == null && state == null && p_code == null)
+                {
+                    var pageResult = 12f;
+                    var pageCounts = Math.Ceiling(_appDBContext.Listing.Count() / pageResult);
+
+                    var listings_all = await _appDBContext.Listing
+                        .OrderByDescending(x => x.id_listing)
+                        .Skip((page - 1) * (int)pageResult)
+                        .Take((int)pageResult)
+                        .ToListAsync();
+
+                    var respons = new ListingResponse
+                    {
+                        listings = listings_all,
+                        currentPage = page,
+                        pages = (int)pageCounts
+                    };
+
+
+                    return Ok(respons);
+                }
+
+
+                var listingsTotal = await query.ToListAsync();
+
+                var pageResults = 12f;
+                var pageCount = Math.Ceiling(listingsTotal.Count() / pageResults);
+
+                var listings = await query
+                    .OrderByDescending(x => x.id_listing)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+
+                var response = new ListingResponse
+                {
+                    listings = listings,
+                    currentPage = page,
+                    pages = (int)pageCount
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Listing>>> Get()
         {
@@ -113,8 +216,8 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<Listing>>> GetRelatedListings(int id)
         {
             Listing tmp = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == id);
-            await _appDBContext.Listing.Include(x=> x.tags).ToListAsync();
-            
+            await _appDBContext.Listing.Include(x => x.tags).ToListAsync();
+
             HashSet<Tag> requestTags = new(tmp.tags);
             //update algorithm to fetch by set of tags
 
@@ -127,14 +230,14 @@ namespace workshop_v0._1.Controllers
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             if (listing == null) { return BadRequest("Can't add an empty offer"); }
-               
+
 
             User tmpUser = await _userContext.User.FirstOrDefaultAsync(x => x.id_user == id);
 
             //fix tag duplication
             HashSet<Tag> tmpTags = new();
-            
-            foreach(Tag t in listing.tags)
+
+            foreach (Tag t in listing.tags)
             {
                 Tag individualTag = await _appDBContext.Tag.FirstOrDefaultAsync(x => x.tag_name == t.tag_name);
                 individualTag.listings = new HashSet<Listing>();
@@ -150,7 +253,7 @@ namespace workshop_v0._1.Controllers
 
             tmpUser.listings = new HashSet<Listing>();
             tmpUser.listings.Add(listing);
-       
+
             _appDBContext.Listing.Add(listing);
             _appDBContext.User.Update(tmpUser);
 
@@ -183,16 +286,16 @@ namespace workshop_v0._1.Controllers
             {
                 return BadRequest("Cannot delete other users listing");
             }
-            
+
             tmp.post_name = listing.post_name;
             tmp.post_date = listing.post_date;
             tmp.post_desc = listing.post_desc;
             tmp.price = tmp.price;
             tmp.locations = listing.locations;
             tmp.post_date = DateTime.Now;
-            
 
-            foreach(Tag t in tmp.tags)
+
+            foreach (Tag t in tmp.tags)
             {
                 foreach (Tag n in listing.tags)
                 {
@@ -210,9 +313,9 @@ namespace workshop_v0._1.Controllers
                 //individualTag.listings = new HashSet<Listing>();
                 individualTag.listings.Add(tmp);
                 tmp.tags.Add(individualTag);
-                _appDBContext.Tag.Update(individualTag); 
+                _appDBContext.Tag.Update(individualTag);
             }
-            
+
 
             _appDBContext.Update(tmp);
             await _appDBContext.SaveChangesAsync();
