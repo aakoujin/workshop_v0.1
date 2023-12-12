@@ -61,7 +61,8 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<ListingResponse>>> Search(
             [FromQuery] string text_search, [FromQuery] double? min, [FromQuery] double? max,
             [FromQuery] string country, [FromQuery] string city, [FromQuery] string state,
-            [FromQuery] string p_code, [FromQuery] int page)
+            [FromQuery] string p_code, [FromQuery] int page,
+            [FromQuery] string sortBy, [FromQuery] string sortOrder)
         {
             try
             {
@@ -112,11 +113,15 @@ namespace workshop_v0._1.Controllers
 
                 if (text_search == null && min == null && max == null && country == null && city == null && state == null && p_code == null)
                 {
+                    if (!string.IsNullOrEmpty(sortBy) && !string.IsNullOrEmpty(sortOrder))
+                    {
+                        query = ApplySorting(query, sortBy, sortOrder);
+                    }
+
                     var pageResult = 12f;
                     var pageCounts = Math.Ceiling(_appDBContext.Listing.Count() / pageResult);
 
-                    var listings_all = await _appDBContext.Listing
-                        .OrderByDescending(x => x.id_listing)
+                    var listings_all = await query
                         .Skip((page - 1) * (int)pageResult)
                         .Take((int)pageResult)
                         .ToListAsync();
@@ -132,6 +137,10 @@ namespace workshop_v0._1.Controllers
                     return Ok(respons);
                 }
 
+                if (!string.IsNullOrEmpty(sortBy) && !string.IsNullOrEmpty(sortOrder))
+                {
+                    query = ApplySorting(query, sortBy, sortOrder);
+                }
 
                 var listingsTotal = await query.ToListAsync();
 
@@ -139,7 +148,6 @@ namespace workshop_v0._1.Controllers
                 var pageCount = Math.Ceiling(listingsTotal.Count() / pageResults);
 
                 var listings = await query
-                    .OrderByDescending(x => x.id_listing)
                     .Skip((page - 1) * (int)pageResults)
                     .Take((int)pageResults)
                     .ToListAsync();
@@ -157,6 +165,33 @@ namespace workshop_v0._1.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        private IQueryable<Listing> ApplySorting(IQueryable<Listing> query, string sortBy, string sortOrder)
+        {
+            switch (sortBy)
+            {
+                case "date":
+                    query = sortOrder == "asc" ? query.OrderBy(x => x.id_listing) : query.OrderByDescending(x => x.id_listing);
+                    break;
+                case "name":
+                    query = sortOrder == "asc" ? query.OrderBy(x => x.post_name) : query.OrderByDescending(x => x.post_name);
+                    break;
+                case "price":
+                    query = sortOrder == "asc" ? query.OrderBy(x => x.price) : query.OrderByDescending(x => x.price);
+                    break;
+                case "country":
+                    query = sortOrder == "asc" ? query.OrderBy(x => x.locations.First().country) : query.OrderByDescending(x => x.locations.First().country);
+                    break;
+                case "city":
+                    query = sortOrder == "asc" ? query.OrderBy(x => x.locations.First().city) : query.OrderByDescending(x => x.locations.First().city);
+                    break;
+             
+                default:
+                    break;
+            }
+
+            return query;
         }
 
 
