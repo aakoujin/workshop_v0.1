@@ -15,9 +15,9 @@ namespace workshop_v0._1.Controllers
     [EnableCors("MyPolicy")]
     public class ContentController : ControllerBase
     {
-        ContentContext _context;
+        AppDBContext _context;
 
-        public ContentController(ContentContext context)
+        public ContentController(AppDBContext context)
         {
             _context = context;
         }
@@ -32,6 +32,15 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<IEnumerable<Content>>> Get(int id)
         {
             Content content = await _context.Content.FirstOrDefaultAsync(x => x.id_content == id);
+            if (content == null)
+                return NotFound("Content doesn't exist");
+            return new ObjectResult(content);
+        }
+
+        [HttpGet("byListing/{id}")]
+        public async Task<ActionResult<IEnumerable<Content>>> GetByListing(int id)
+        {
+            Content content = await _context.Content.FirstOrDefaultAsync(x => x.id_listing == id);
             if (content == null)
                 return NotFound("Content doesn't exist");
             return new ObjectResult(content);
