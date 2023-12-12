@@ -25,7 +25,15 @@ namespace workshop_v0._1.DAL
             _appDBContext = appDBContext;
         }
 
-        
+        [HttpGet("viewer"), Authorize]
+        public async Task<ActionResult<int>> GetViewer()
+        {
+            int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            return id;
+        }
+
+
         [HttpGet("userInfo"), Authorize]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {

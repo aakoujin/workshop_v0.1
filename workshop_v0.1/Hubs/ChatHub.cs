@@ -36,8 +36,8 @@ namespace workshop_v0._1.Hubs
 
             await Groups.AddToGroupAsync(Context.ConnectionId, chatConnection.chatConnectionString);
 
-            await Clients.Group(chatConnection.chatConnectionString).SendAsync("ReceiveMessage",
-                _bot, $"Chat started");
+            //await Clients.Group(chatConnection.chatConnectionString).SendAsync("ReceiveMessage",
+              //  _bot, $"Chat started");
         }
     }
 }
