@@ -20,9 +20,11 @@ namespace workshop_v0._1.Controllers
         SavedListingContext _context;
         UserContext _userContext;
         ListingContext _listingContext;
+        AppDBContext _appDBContext;
 
-        public SavedListingController(SavedListingContext context, UserContext userContext, ListingContext listingContext)
+        public SavedListingController(SavedListingContext context, UserContext userContext, ListingContext listingContext, AppDBContext appDBContext)
         {
+            _appDBContext = appDBContext;
             _context = context;
             _userContext = userContext;
             _listingContext = listingContext;
@@ -61,19 +63,28 @@ namespace workshop_v0._1.Controllers
         public async Task<ActionResult<SavedListing>> GetByUserClaim()
         {
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            List<SavedListing> savedListings = await _context.SavedListing.Where(x => x.id_user == id).ToListAsync();
+            List<SavedListing> savedListings = await _appDBContext.SavedListing.Where(x => x.id_user == id).ToListAsync();
          
 
             if (savedListings.Count == 0)
                 return NotFound("No listings yet");
 
+
             List<Listing> fetchedListings = new();
 
             foreach (SavedListing sl in savedListings)
             {
-                fetchedListings.Add(await _listingContext.Listing.FindAsync(sl.id_listing));
+                if (await _appDBContext.Listing.FirstOrDefaultAsync(x=> x.id_listing == sl.id_listing) == null){
+                    _appDBContext.SavedListing.Remove(sl);
+                    await _appDBContext.SaveChangesAsync();
+                }
+                else
+                {
+                    fetchedListings.Add(await _appDBContext.Listing.FindAsync(sl.id_listing));
+                }
+                
             }
-            await _listingContext.Listing.Include(x => x.contents).ToListAsync();
+            await _appDBContext.Listing.Include(x => x.contents).ToListAsync();
 
             return new ObjectResult(fetchedListings);
         }

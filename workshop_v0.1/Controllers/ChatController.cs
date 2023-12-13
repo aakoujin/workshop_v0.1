@@ -66,19 +66,109 @@ namespace workshop_v0._1.Controllers
         }
 
         [HttpGet("getOutcommingChats"), Authorize]
-        public async Task<ActionResult<IEnumerable<ChatRoom>>> GetOutcommingChats()
+        public async Task<ActionResult<IEnumerable<ChatRoomDTO>>> GetOutcommingChats()
         {
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return await _appDBContext.ChatRoom.Where(x => x.first_user == id).ToListAsync();
+            var chats = await _appDBContext.ChatRoom.Where(x => x.first_user == id).ToListAsync();
+            List<ChatRoomDTO> chatsDTO = new List<ChatRoomDTO>();
+
+            foreach (ChatRoom chatRoom in chats)
+            {
+                var content = await _appDBContext.Content.FirstOrDefaultAsync(x => x.id_listing == chatRoom.listing);
+                var listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == chatRoom.listing);
+
+
+                if (listing != null)
+                {
+
+                    if (content != null && content.media != null)
+                    {
+                        chatsDTO.Add(new ChatRoomDTO
+                        {
+                            id_chat_room = chatRoom.id_chat_room,
+                            first_user = chatRoom.first_user,
+                            second_user = chatRoom.second_user,
+                            connection_string = chatRoom.connection_string,
+                            listing = chatRoom.listing,
+                            media = content.media,
+                            price = listing.price,
+                            name = listing.post_name,
+                            chat_room_messages = chatRoom.chat_room_messages
+                        });
+                    }
+                    else if (content == null || content.media == null)
+                    {
+                        chatsDTO.Add(new ChatRoomDTO
+                        {
+                            id_chat_room = chatRoom.id_chat_room,
+                            first_user = chatRoom.first_user,
+                            second_user = chatRoom.second_user,
+                            connection_string = chatRoom.connection_string,
+                            listing = chatRoom.listing,
+                            price = listing.price,
+                            name = listing.post_name,
+                            chat_room_messages = chatRoom.chat_room_messages
+                        });
+                    }
+                }
+            }
+
+            return chatsDTO;
         }
 
         [HttpGet("getIncommingChats"), Authorize]
-        public async Task<ActionResult<IEnumerable<ChatRoom>>> GetIncommingChats()
+        public async Task<ActionResult<IEnumerable<ChatRoomDTO>>> GetIncommingChats()
         {
             int id = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return await _appDBContext.ChatRoom.Where(x => x.second_user == id).ToListAsync();
+            var chats = await _appDBContext.ChatRoom.Where(x => x.second_user == id).ToListAsync();
+            List<ChatRoomDTO> chatsDTO = new List<ChatRoomDTO>();
+
+            foreach (ChatRoom chatRoom in chats)
+            {
+                var content = await _appDBContext.Content.FirstOrDefaultAsync(x => x.id_listing == chatRoom.listing);
+                var listing = await _appDBContext.Listing.FirstOrDefaultAsync(x => x.id_listing == chatRoom.listing);
+
+
+                if (listing != null)
+                {
+
+                    if (content != null && content.media != null)
+                    {
+                        chatsDTO.Add(new ChatRoomDTO
+                        {
+                            id_chat_room = chatRoom.id_chat_room,
+                            first_user = chatRoom.first_user,
+                            second_user = chatRoom.second_user,
+                            connection_string = chatRoom.connection_string,
+                            listing = chatRoom.listing,
+                            media = content.media,
+                            price = listing.price,
+                            name = listing.post_name,
+                            chat_room_messages = chatRoom.chat_room_messages
+                        });
+                    }
+                    else if (content == null || content.media == null)
+                    {
+                        chatsDTO.Add(new ChatRoomDTO
+                        {
+                            id_chat_room = chatRoom.id_chat_room,
+                            first_user = chatRoom.first_user,
+                            second_user = chatRoom.second_user,
+                            connection_string = chatRoom.connection_string,
+                            listing = chatRoom.listing,
+                            price = listing.price,
+                            name = listing.post_name,
+                            chat_room_messages = chatRoom.chat_room_messages
+                        });
+                    }
+
+                }
+
+            }
+
+            return chatsDTO;
         }
 
         [HttpGet("{id}"), Authorize]
@@ -126,7 +216,7 @@ namespace workshop_v0._1.Controllers
             {
                 return new List<ChatRoomMessage>();
             }
-           
+
             return await _appDBContext.ChatRoomMessage.Where(x => x.chat_room_id == tmp.id_chat_room).ToListAsync();
         }
 
