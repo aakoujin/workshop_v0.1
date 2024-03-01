@@ -215,7 +215,7 @@ namespace workshop_v0._1.Controllers
             await _appDBContext.Listing.Include(x => x.locations).ToListAsync();
 
             if (listings.Count == 0)
-                return NotFound("No listings yet");
+                return Ok(new List<Listing>());
             return new ObjectResult(listings);
         }
 

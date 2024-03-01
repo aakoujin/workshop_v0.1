@@ -163,3 +163,9 @@ E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Swashbuckle.AspNetCore.An
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Swashbuckle.AspNetCore.Filters.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Castle.Core.dll
 E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Humanizer.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.AspNetCore.Http.Connections.Client.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.Azure.SignalR.Common.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.Azure.SignalR.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.Azure.SignalR.Protocols.dll
+E:\TF projects\workshop\workshop_v0.1\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Design.dll

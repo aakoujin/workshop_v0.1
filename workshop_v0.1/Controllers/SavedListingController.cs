@@ -67,7 +67,7 @@ namespace workshop_v0._1.Controllers
          
 
             if (savedListings.Count == 0)
-                return NotFound("No listings yet");
+                return Ok(new List<Listing>());
 
 
             List<Listing> fetchedListings = new();

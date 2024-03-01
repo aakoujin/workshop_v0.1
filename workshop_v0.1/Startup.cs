@@ -36,7 +36,7 @@ namespace workshop_v0._1
         {
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3000", "http://localhost:42999", "localhost:3000")
+                builder.WithOrigins("http://localhost:3000", "http://localhost:42999", "localhost:3000", "https://lighthearted-kulfi-6c53a0.netlify.app", "*")
                        .AllowCredentials()
                        .WithMethods("POST", "PUT", "PATCH", "GET", "DELETE", "OPTIONS")
                        .AllowAnyHeader();
